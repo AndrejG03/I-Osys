@@ -1,79 +1,68 @@
 import tkinter as tk
 from tkinter import ttk
 
-# Kreirajte glavni prozor
+# Create the main window
 root = tk.Tk()
 root.title("Walmart Input Output System")
+root.geometry("300x250")  # Adjusted height to accommodate labels
 
-# Definišite raspored prozora
-root.geometry("400x300")  # širina x visina
+# Function to update the combobox dropdown when typing
+def on_type(event, values_list):
+    widget = event.widget
+    typed = widget.get()
+    if typed:
+        widget['values'] = [item for item in values_list if typed.lower() in item.lower()]
+    else:
+        widget['values'] = values_list
+    widget.event_generate('<Down>')
 
-# Lista odeljenja
+# Departments list
 departments = ['RX', 'FE', 'FS', 'TLE', 'SD', 'COS', 'LQR']
+# Hardware types list
+hardware_types = ['Debit Reader Lain 7000', 'Debit Reader Ingenico ISC 250', 
+                  'Debit Reader MX915', 'Register Model A', 'Hand-held Scanner X']
+# Problems list
+problems_list = ['ICC not reading cards', 'MSR not reading cards', 'Debit reader broken']
 
-# Kreirajte StringVar da drži izabrano odeljenje
-selected_department = tk.StringVar()
-
-# Kreirajte padajući meni za odeljenja sa omogućenim pretraživanjem
-department_menu = ttk.Combobox(root, textvariable=selected_department, values=departments)
-department_menu['state'] = 'readonly'  # Sprečava korisnika da unese vrednost koja nije na listi
-department_menu.grid(column=0, row=0, padx=10, pady=10)
-
-# Polje za unos broja kase
-register_number_entry = tk.Entry(root)
-register_number_entry.grid(column=0, row=1, padx=10, pady=10)
-
-# Lista hardvera
-hardware = ['Lain 7000', 'Ingenico ISC 250', 'MX915', 'Register Model A', 'Hand-held Scanner X']
-
-# Kreirajte StringVar da drži izabrani hardver
-selected_hardware = tk.StringVar()
-
-# Kreirajte padajući meni za hardver sa omogućenim pretraživanjem
-hardware_menu = ttk.Combobox(root, textvariable=selected_hardware, values=hardware)
-hardware_menu['state'] = 'readonly'  # Sprečava korisnika da unese vrednost koja nije na listi
-hardware_menu.grid(column=0, row=2, padx=10, pady=10)
-
-# Lista problema - inicijalno prazna
-problems = []
-
-# Kreirajte StringVar da drži izabrani problem
-selected_problem = tk.StringVar()
-
-# Kreirajte padajući meni za probleme sa omogućenim pretraživanjem
-problem_menu = ttk.Combobox(root, textvariable=selected_problem, values=problems)
-problem_menu['state'] = 'readonly'  # Sprečava korisnika da unese vrednost koja nije na listi
-problem_menu.grid(column=0, row=3, padx=10, pady=10)
-
-# Funkcija za obradu unetih podataka i generisanje izlaza
+# Function to process the input data and generate the output
 def process_data():
     department = selected_department.get()
-    register_number = register_number_entry.get()
-    hw = selected_hardware.get()
+    hardware = selected_hardware.get()
     problem = selected_problem.get()
-    output = f"{department} {register_number} {hw} {problem}"
-    print(output)  # Ili ažurirajte ovu liniju da rukuje izlazom kako je potrebno
+    output_text.set(f"{department} {hardware} {problem}")
 
-# Kreirajte dugme za aktiviranje obrade podataka
-process_button = tk.Button(root, text="Generiši Izlaz", command=process_data)
-process_button.grid(column=0, row=4, padx=10, pady=10)
+# Layout configuration
+root.columnconfigure(0, weight=1)
 
-# Funkcija za dodavanje problema u padajući meni
-def add_problem():
-    new_problem = problem_entry.get()
-    if new_problem and new_problem not in problems:
-        problems.append(new_problem)
-        problem_menu['values'] = problems  # Ažurirajte opcije padajućeg menija
-        selected_problem.set(new_problem)  # Postavite novododati problem kao trenutni izbor
-        problem_entry.delete(0, tk.END)  # Očistite polje za unos
+# Label and Dropdown for departments
+tk.Label(root, text="1. Enter Department:").grid(column=0, row=0, padx=5, pady=2, sticky='w')
+selected_department = tk.StringVar()
+department_menu = ttk.Combobox(root, textvariable=selected_department, values=departments, width=15)
+department_menu.bind('<KeyRelease>', lambda event: on_type(event, departments))
+department_menu.grid(column=0, row=1, padx=5, pady=5, sticky='ew')
 
-# Polje za unos da se doda novi problem
-problem_entry = tk.Entry(root)
-problem_entry.grid(column=0, row=5, padx=10, pady=10)
+# Label and Dropdown for hardware types
+tk.Label(root, text="2. Enter Device:").grid(column=0, row=2, padx=5, pady=2, sticky='w')
+selected_hardware = tk.StringVar()
+hardware_type_menu = ttk.Combobox(root, textvariable=selected_hardware, values=hardware_types, width=25)
+hardware_type_menu.bind('<KeyRelease>', lambda event: on_type(event, hardware_types))
+hardware_type_menu.grid(column=0, row=3, padx=5, pady=5, sticky='ew')
 
-# Dugme za dodavanje novog problema na listu
-add_problem_button = tk.Button(root, text="Dodaj Problem", command=add_problem)
-add_problem_button.grid(column=0, row=6, padx=10, pady=10)
+# Label and Dropdown for problems
+tk.Label(root, text="3. Enter Problem:").grid(column=0, row=4, padx=5, pady=2, sticky='w')
+selected_problem = tk.StringVar()
+problem_menu = ttk.Combobox(root, textvariable=selected_problem, values=problems_list, width=25)
+problem_menu.bind('<KeyRelease>', lambda event: on_type(event, problems_list))
+problem_menu.grid(column=0, row=5, padx=5, pady=5, sticky='ew')
 
-# Pokrenite aplikaciju
+# Button to generate output
+process_button = tk.Button(root, text="Generate Output", command=process_data)
+process_button.grid(column=0, row=6, padx=5, pady=5, sticky='ew')
+
+# Output field
+output_text = tk.StringVar()
+output_entry = tk.Entry(root, textvariable=output_text, state='readonly', readonlybackground='white', fg='black')
+output_entry.grid(column=0, row=7, padx=5, pady=5, sticky='ew')
+
+# Run the application
 root.mainloop()
