@@ -1,6 +1,13 @@
-# ncr-wm-pos
+# WI/O Walmart input output ticketing and services automatisation system
 
-An Electron application with React and TypeScript
+An Electron application with React and TypeScript frontend, python backend and Excel and DBML Database
+
+
+<img width="1440" alt="Screenshot 2023-12-22 at 02 33 43" src="https://github.com/AndrejG03/I-Osys/assets/115347117/d7650044-581d-4077-96be-62e8aa1ffbb6">
+
+
+
+Database documentation foundable at: https://dbml.dbdiagram.io/docs/
 
 ## Recommended IDE Setup
 
